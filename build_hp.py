@@ -7,16 +7,19 @@ subpageTexts = {}
 tokenTexts = {}
 
 # read token files
-for tokenPath in list(tokenPaths.values()):
-    with open(tokenPath, 'r', encoding='utf-8') as tokenFile:
-        tokenTexts[tokenPath] = tokenFile.read()
+for token in list(tokenPaths.keys()):
+    with open(tokenPaths[token], 'r', encoding='utf-8') as tokenFile:
+        tokenTexts[token] = tokenFile.read()
 
-# read input files and make replacements
+# read input files
 for pagePath in list(subpagePaths.keys()):
     with open(pagePath, 'r', encoding='utf-8') as pageFile:
         subpageTexts[pagePath] = pageFile.read()
-        for token in list(tokenTexts.keys()):
-            subpageTexts[pagePath] = subpageTexts[pagePath].replace(token, tokenTexts[token])
+
+# make replacements
+for pagePath in list(subpageTexts.keys()):
+    for token in list(tokenTexts.keys()):
+        subpageTexts[pagePath] = subpageTexts[pagePath].replace(token, tokenTexts[token])
 
 # write output files
 for pagePath in list(subpageTexts.keys()):
