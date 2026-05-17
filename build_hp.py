@@ -1,7 +1,7 @@
 import os
 import datetime
 
-subpagePaths = {'jeffHome.html': 'index.html', 'articles/jeffArticles.html': 'articles/index.html'}
+subpagePaths = {'jeffHome.html': 'index.html', 'articles/jeffArticles.html': 'articles/index.html', 'about/jeffAbout.html': 'about/index.html'}
 tokenPaths = {r'{jeffHeader}': 'header.html', r'{jeffFooter}': 'footer.html', r'{jeffArticleList}': 'articles/article_list.html'}
 
 # add each article to the article path list
@@ -37,7 +37,8 @@ for articleDate in sorted(list(articleDates.keys()), reverse=True):
 articlePreviewList = ''
 for articlePath in sortedArticlePaths[:9]:
     articlePreviewPath = articlePath.replace('article.html', 'article_preview.html')
-    with open(articlePreviewPath, 'r', encoding='utf-8') as articlePreviewText:
+    with open(articlePreviewPath, 'r', encoding='utf-8') as articlePreviewFile:
+        articlePreviewText = articlePreviewFile.read()
         articlePreviewList += articlePreviewText
 
 # write article list
