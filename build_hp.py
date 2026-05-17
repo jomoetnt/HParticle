@@ -45,6 +45,9 @@ for articlePath in list(articlePaths.keys()):
 
         articleDate = datetime.date.fromisoformat(articleDetails['date'])
         articleMetadata['date'] = articleDate.toordinal()
+    
+    # replace title token
+    articleText = articleText.replace(r'{title}', articleMetadata['title'])
 
     # add article to dictionary
     jeffArticles[articlePaths[articlePath]] = jeffArticle(articleMetadata['title'], articleMetadata['teaser'], articleMetadata['date'], articleMetadata['topic'], articleMetadata['colour'], articleMetadata['thumbnail'], articleText, articlePaths[articlePath])
@@ -88,6 +91,7 @@ for pagePath in list(subpagePaths.keys()):
 # add each article to the subpage dictionary
 for articlePath in list(articlePaths.keys()):
     subpagePaths[articlePath] = articlePaths[articlePath]
+    subpageTexts[articlePath] = jeffArticles[subpagePaths[articlePath]].bodyText
 
 # make replacements
 for pagePath in list(subpageTexts.keys()):
