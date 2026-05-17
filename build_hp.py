@@ -25,7 +25,7 @@ class jeffArticle:
         self.outputPath = outputPath
     
     def replaceTokens(self, inputText):        
-        return inputText.replace(r'{title}', self.title).replace(r'{teaser}', self.teaser).replace(r'{date}', self.date.strftime('%B %d, %Y')).replace(r'{topic}', self.topic).replace(r'{colour}', self.colour).replace(r'{thumbnail}', self.thumbnail).replace(r'{link}', self.outputPath.replace('index.html', ''))
+        return inputText.replace(r'{title}', self.title).replace(r'{teaser}', self.teaser).replace(r'{date}', datetime.date.fromordinal(self.date).strftime('%B %d, %Y')).replace(r'{topic}', self.topic).replace(r'{colour}', self.colour).replace(r'{thumbnail}', self.thumbnail).replace(r'{link}', self.outputPath.replace('index.html', ''))
 
 # make outputPath-article dictionary
 jeffArticles = {}
@@ -47,7 +47,7 @@ for articlePath in list(articlePaths.keys()):
         articleMetadata['date'] = articleDate.toordinal()
 
     # add article to dictionary
-    jeffArticles[articlePaths[articlePath]] = jeffArticle(articleMetadata['title'], articleMetadata['date'], articleMetadata['thumbnail'], articleText)
+    jeffArticles[articlePaths[articlePath]] = jeffArticle(articleMetadata['title'], articleMetadata['teaser'], articleMetadata['date'], articleMetadata['topic'], articleMetadata['colour'], articleMetadata['thumbnail'], articleText, articlePaths[articlePath])
 
 # sort articlePaths by date
 sortedArticles = sorted(list(jeffArticles.values()), key=lambda jeffArticle: jeffArticle.date, reverse=True)
@@ -78,8 +78,8 @@ for pagePath in list(subpagePaths.keys()):
         subpageTexts[pagePath] = pageFile.read()
 
 # add each article to the subpage dictionary
-for articlePath in list(articleTexts.keys()):
-    subpagePaths[articlePath] = articleTexts[articlePath]
+for articlePath in list(articlePaths.keys()):
+    subpagePaths[articlePath] = articlePaths[articlePath]
 
 # make replacements
 for pagePath in list(subpageTexts.keys()):
