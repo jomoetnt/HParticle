@@ -3,7 +3,7 @@ import datetime
 import json
 
 subpagePaths = {'jeffHome.html': 'index.html', 'articles/jeffArticles.html': 'articles/index.html', 'about/jeffAbout.html': 'about/index.html'}
-tokenPaths = {r'{jeffHeader}': 'header.html', r'{jeffFooter}': 'footer.html', r'{jeffArticleList}': 'articles/article_list.html'}
+tokenPaths = {r'{jeffHeader}': 'header.html', r'{jeffFooter}': 'footer.html', r'{jeffArticleList}': 'articles/article_list.html', r'{jeffFeatured}': 'articles/featured.html'}
 
 # add each article to the article path list
 articlePaths = {}
@@ -52,7 +52,7 @@ for articlePath in list(articlePaths.keys()):
 # sort articlePaths by date
 sortedArticles = sorted(list(jeffArticles.values()), key=lambda jeffArticle: jeffArticle.date, reverse=True)
 
-# write article list
+# write article list and featured article
 with open('articles/article_list_item.html', 'r', encoding='utf-8') as jeffArticleItem:
     # make replacements to preview
     jeffArticlePreviewTemplate = jeffArticleItem.read()
@@ -64,6 +64,14 @@ with open('articles/article_list_item.html', 'r', encoding='utf-8') as jeffArtic
     # combine previews
     with open('articles/article_list.html', 'w', encoding='utf-8') as jeffArticleList:
         jeffArticleList.write(''.join(jeffArticlePreviews))
+    
+    # make featured article preview
+    featuredArticle = sortedArticles[0]
+    featuredArticleTemplate = jeffArticlePreviewTemplate.replace('jeffArticleListItem', 'jeffFeaturedArticle').replace('jeffArticleLink', 'jeffFeaturedArticleLink').replace('jeffTopicSmall', 'jeffTopic').replace('jeffArticleHeadingSmall', 'jeffFeaturedArticleHeading').replace('jeffDateSmall', 'jeffDateBig').replace('jeffArticleImageSmall', 'jeffFeaturedImageBig').replace('jeffSmallArticlePreview', 'jeffBigArticlePreview')
+    featuredArticlePreview = featuredArticle.replaceTokens(featuredArticleTemplate)
+
+    with open('articles/featured.html', 'w', encoding='utf-8') as jeffArticleFeaturedPreview:
+        jeffArticleFeaturedPreview.write(featuredArticlePreview)
 
 # read token files
 tokenTexts = {}
