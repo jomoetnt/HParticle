@@ -2,6 +2,8 @@ import os
 import datetime
 import json
 
+topicColours = {'Physics and Astronomy': 'physics', 'Mathematics': 'mathematics', 'Biology': 'biology', 'Computing': 'computing', 'Psychology and Psychiatry': 'psychology', 'Linguistics': 'linguistics', 'Philosophy': 'philosophy'}
+
 subpagePaths = {'jeffHome.html': 'index.html', 'articles/jeffArticles.html': 'articles/index.html', 'about/jeffAbout.html': 'about/index.html'}
 tokenPaths = {r'{jeffHeader}': 'header.html', r'{jeffFooter}': 'footer.html', r'{jeffArticleList}': 'articles/article_list.html', r'{jeffFeatured}': 'articles/featured.html'}
 
@@ -9,23 +11,22 @@ tokenPaths = {r'{jeffHeader}': 'header.html', r'{jeffFooter}': 'footer.html', r'
 articlePaths = {}
 for articleName in os.listdir('articles'):
     if os.path.isdir('articles/' + articleName):
-        articleInputPath = 'articles/' + articleName + '/article.html'
+        articleInputPath = 'articles/' + articleName + '/jeffArticle.html'
         articleOutputPath = 'articles/' + articleName + '/index.html'
         articlePaths[articleInputPath] = articleOutputPath
 
 class jeffArticle:
-    def __init__(self, title, teaser, date, topic, colour, thumbnail, bodyText, outputPath):
+    def __init__(self, title, teaser, date, topic, thumbnail, bodyText, outputPath):
         self.title = title
         self.teaser = teaser
         self.date = date
         self.topic = topic
-        self.colour = colour
         self.thumbnail = thumbnail
         self.bodyText = bodyText
         self.outputPath = outputPath
     
     def replaceTokens(self, inputText):        
-        return inputText.replace(r'{title}', self.title).replace(r'{teaser}', self.teaser).replace(r'{date}', datetime.date.fromordinal(self.date).strftime('%B %d, %Y')).replace(r'{topic}', self.topic).replace(r'{colour}', self.colour).replace(r'{thumbnail}', self.thumbnail).replace(r'{link}', self.outputPath.replace('index.html', ''))
+        return inputText.replace(r'{title}', self.title).replace(r'{teaser}', self.teaser).replace(r'{date}', datetime.date.fromordinal(self.date).strftime('%B %d, %Y')).replace(r'{topic}', self.topic).replace(r'{colour}', topicColours[self.topic]).replace(r'{thumbnail}', self.thumbnail).replace(r'{link}', self.outputPath.replace('index.html', ''))
 
 # make outputPath-article dictionary
 jeffArticles = {}
@@ -36,7 +37,7 @@ for articlePath in list(articlePaths.keys()):
         articleText = articleFile.read()
 
     # read article details
-    articlePreviewPath = articlePath.replace('article.html', 'article_details.json')
+    articlePreviewPath = articlePath.replace('jeffArticle.html', 'article_details.json')
     articleMetadata = {}
     with open(articlePreviewPath, 'r', encoding='utf-8') as articleFile:
         articleDetails = json.load(articleFile)
@@ -50,10 +51,10 @@ for articlePath in list(articlePaths.keys()):
     articleText = articleText.replace(r'{title}', articleMetadata['title'])
 
     # fix thumbnail path
-    jeffThumbnail = articlePath.replace('article.html', '').replace('articles/', '') + articleMetadata['thumbnail']
+    jeffThumbnail = articlePath.replace('jeffArticle.html', '').replace('articles/', '') + articleMetadata['thumbnail']
 
     # add article to dictionary
-    jeffArticles[articlePaths[articlePath]] = jeffArticle(articleMetadata['title'], articleMetadata['teaser'], articleMetadata['date'], articleMetadata['topic'], articleMetadata['colour'], jeffThumbnail, articleText, articlePaths[articlePath])
+    jeffArticles[articlePaths[articlePath]] = jeffArticle(articleMetadata['title'], articleMetadata['teaser'], articleMetadata['date'], articleMetadata['topic'], jeffThumbnail, articleText, articlePaths[articlePath])
 
 # sort articlePaths by date
 sortedArticles = sorted(list(jeffArticles.values()), key=lambda jeffArticle: jeffArticle.date, reverse=True)
