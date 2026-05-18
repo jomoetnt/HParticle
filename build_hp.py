@@ -47,8 +47,9 @@ for articlePath in list(articlePaths.keys()):
         articleDate = datetime.date.fromisoformat(articleDetails['date'])
         articleMetadata['date'] = articleDate.toordinal()
     
-    # replace title token
+    # replace tokens in article itself
     articleText = articleText.replace(r'{title}', articleMetadata['title'])
+    articleText = articleText.replace(r'{date}', datetime.date.fromordinal(articleMetadata['date']).strftime('%B %d, %Y'))
 
     # fix thumbnail path
     jeffThumbnail = articlePath.replace('jeffArticle.html', '').replace('articles/', '') + articleMetadata['thumbnail']
@@ -64,7 +65,7 @@ with open('articles/jeffArticlePreview.html', 'r', encoding='utf-8') as jeffArti
     # make replacements to preview
     jeffArticlePreviewTemplate = jeffArticleItem.read()
     jeffArticlePreviews = []
-    for sortedArticle in sortedArticles[:9]:
+    for sortedArticle in sortedArticles:
         # remove 'articles/' in path
         sortedArticle.outputPath = sortedArticle.outputPath.replace('articles/', '')
 
