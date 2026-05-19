@@ -112,7 +112,7 @@ jeffAnnouncements = {}
 for announcementPath in list(announcementPaths.keys()):
     # read announcement text
     announcementText = ''
-    with open(articlePath, 'r', encoding='utf-8') as announcementFile:
+    with open(announcementPath, 'r', encoding='utf-8') as announcementFile:
         announcementText = announcementFile.read()
 
     # read announcement details
