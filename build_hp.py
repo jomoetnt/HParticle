@@ -68,6 +68,7 @@ for articlePath in list(articlePaths.keys()):
     # replace tokens in article itself
     articleText = articleText.replace(r'{title}', articleMetadata['title'])
     articleText = articleText.replace(r'{date}', datetime.date.fromordinal(articleMetadata['date']).strftime('%B %d, %Y'))
+    articleText = articleText.replace(r'{teaser}', articleMetadata['teaser'])
 
     # fix thumbnail path
     jeffThumbnail = articlePath.replace('jeffArticle.html', '').replace('articles/', '') + articleMetadata['thumbnail']

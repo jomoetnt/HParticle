@@ -152,7 +152,7 @@ button {
 }
 
 .jeffIntroSection {
-    margin-top: 180px;
+    margin-top: 250px;
 }
 
 .jeffHorizontalContainer {
@@ -444,6 +444,7 @@ button {
 .jeffArticle {
     margin-top: 180px;
     line-height: 28px;
+    min-height: 60vh;
     min-width: 400px;
     max-width: 1600px;
     text-align: center;
