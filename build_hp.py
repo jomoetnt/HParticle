@@ -18,7 +18,7 @@ for articleName in os.listdir('articles'):
 # add each announcement to the announcement path list
 announcementPaths = {}
 for announcementName in os.listdir('announcements'):
-    if os.path.isdir('announcements/' + articleName):
+    if os.path.isdir('announcements/' + announcementName):
         announcementInputPath = 'announcements/' + announcementName + '/jeffAnnouncement.html'
         announcementOutputPath = 'announcements/' + announcementName + '/index.html'
         announcementPaths[announcementInputPath] = announcementOutputPath
@@ -159,7 +159,8 @@ with open('announcements/jeffAnnouncementPreview.html', 'r', encoding='utf-8') a
     # make featured announcement preview
     featuredAnnouncement = sortedAnnouncements[0]
     #featuredAnnouncementTemplate = jeffAnnouncementPreviewTemplate.replace('jeffArticleListItem', 'jeffFeaturedArticle').replace('jeffArticleLink', 'jeffFeaturedArticleLink').replace('jeffTopicSmall', 'jeffTopic').replace('jeffArticleHeadingSmall', 'jeffFeaturedArticleHeading').replace('jeffDateSmall', 'jeffDateBig').replace('jeffArticleImageSmall', 'jeffFeaturedImageBig').replace('jeffSmallArticlePreview', 'jeffBigArticlePreview')
-    featuredAnnouncementPreview = featuredAnnouncement.replaceTokens(featuredArticleTemplate)
+    featuredAnnouncementTemplate = jeffAnnouncementPreviewTemplate
+    featuredAnnouncementPreview = featuredAnnouncement.replaceTokens(featuredAnnouncementTemplate)
 
     with open('announcements/featured.html', 'w', encoding='utf-8') as jeffAnnouncementFeaturedPreview:
         jeffAnnouncementFeaturedPreview.write(featuredAnnouncementPreview)
