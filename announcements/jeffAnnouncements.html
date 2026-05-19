@@ -4,16 +4,28 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="author" content="jomoetnt">
-        <meta name="description" content="Announcements about hParticle">
+        <meta name="description" content="List of announcements">
         <title>ħParticle - Announcements</title>
         <link rel="stylesheet" href="../styles.css">
         <link rel="icon" href="../hparticleicon.png">
     </head>
     <body class="jeffBody">
         {jeffHeader}
-        
-
-
+        <div class="jeffAnnouncementListContainer">
+            <div class="jeffHorizontalContainer">
+                <div class="jeffSectionTitleContainer">
+                    <h3>Latest Announcements</h3>
+                </div>
+                <div class="jeffAnnouncementList">
+                    {jeffAnnouncementList}
+                </div>
+                <div class="jeffPageIndicator">Showing Page 1 of 1</div>
+                <div role="navigation" class="jeffPageButtonContainer">
+                    <button class="jeffPageButton" id="PrevButton" onclick="changePage(-1)">Previous Page</a>
+                    <button class="jeffPageButton" id="NextButton" onclick="changePage(1)">Next Page</a>
+                </div>
+            </div>
+        </div>
         {jeffFooter}
     </body>
 </html>

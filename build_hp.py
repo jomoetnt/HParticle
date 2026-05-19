@@ -4,8 +4,8 @@ import json
 
 topicColours = {'Physics and Astronomy': 'physics', 'Mathematics': 'mathematics', 'Biology': 'biology', 'Computing': 'computing', 'Psychology and Psychiatry': 'psychology', 'Linguistics': 'linguistics', 'Philosophy': 'philosophy'}
 
-subpagePaths = {'jeffHome.html': 'index.html', 'articles/jeffArticles.html': 'articles/index.html', 'about/jeffAbout.html': 'about/index.html'}
-tokenPaths = {r'{jeffHeader}': 'header.html', r'{jeffFooter}': 'footer.html', r'{jeffArticleList}': 'articles/article_list.html', r'{jeffFeatured}': 'articles/featured.html'}
+subpagePaths = {'jeffHome.html': 'index.html', 'articles/jeffArticles.html': 'articles/index.html', 'about/jeffAbout.html': 'about/index.html', 'announcements/jeffAnnouncements.html': 'announcements/index.html'}
+tokenPaths = {r'{jeffHeader}': 'header.html', r'{jeffFooter}': 'footer.html', r'{jeffArticleList}': 'articles/article_list.html', r'{jeffAnnouncementList}': 'announcements/announcement_list.html', r'{jeffFeaturedArticle}': 'articles/featured.html', r'{jeffFeaturedAnnouncement}': 'announcements/featured.html'}
 
 # add each article to the article path list
 articlePaths = {}
@@ -14,6 +14,14 @@ for articleName in os.listdir('articles'):
         articleInputPath = 'articles/' + articleName + '/jeffArticle.html'
         articleOutputPath = 'articles/' + articleName + '/index.html'
         articlePaths[articleInputPath] = articleOutputPath
+        
+# add each announcement to the announcement path list
+announcementPaths = {}
+for announcementName in os.listdir('announcements'):
+    if os.path.isdir('announcements/' + articleName):
+        announcementInputPath = 'announcements/' + announcementName + '/jeffAnnouncement.html'
+        announcementOutputPath = 'announcements/' + announcementName + '/index.html'
+        announcementPaths[announcementInputPath] = announcementOutputPath
 
 class jeffArticle:
     def __init__(self, title, teaser, date, topic, thumbnail, bodyText, outputPath):
@@ -27,6 +35,16 @@ class jeffArticle:
     
     def replaceTokens(self, inputText):        
         return inputText.replace(r'{title}', self.title).replace(r'{teaser}', self.teaser).replace(r'{date}', datetime.date.fromordinal(self.date).strftime('%B %d, %Y')).replace(r'{topic}', self.topic).replace(r'{colour}', topicColours[self.topic]).replace(r'{thumbnail}', self.thumbnail).replace(r'{link}', self.outputPath.replace('index.html', ''))
+
+class jeffAnnouncement:
+    def __init__(self, title, date, bodyText, outputPath):
+        self.title = title
+        self.date = date
+        self.bodyText = bodyText
+        self.outputPath = outputPath
+    
+    def replaceTokens(self, inputText):        
+        return inputText.replace(r'{title}', self.title).replace(r'{date}', datetime.date.fromordinal(self.date).strftime('%B %d, %Y')).replace(r'{link}', self.outputPath.replace('index.html', ''))
 
 # make outputPath-article dictionary
 jeffArticles = {}
@@ -89,6 +107,63 @@ with open('articles/jeffArticlePreview.html', 'r', encoding='utf-8') as jeffArti
     with open('articles/featured.html', 'w', encoding='utf-8') as jeffArticleFeaturedPreview:
         jeffArticleFeaturedPreview.write(featuredArticlePreview)
 
+# make outputPath-announcement dictionary
+jeffAnnouncements = {}
+for announcementPath in list(announcementPaths.keys()):
+    # read announcement text
+    announcementText = ''
+    with open(articlePath, 'r', encoding='utf-8') as announcementFile:
+        announcementText = announcementFile.read()
+
+    # read announcement details
+    announcementPreviewPath = announcementPath.replace('jeffAnnouncement.html', 'announcement_details.json')
+    announcementMetadata = {}
+    with open(announcementPreviewPath, 'r', encoding='utf-8') as announcementFile:
+        announcementDetails = json.load(announcementFile)
+
+        announcementMetadata = announcementDetails
+
+        announcementDate = datetime.date.fromisoformat(announcementDetails['date'])
+        announcementMetadata['date'] = announcementDate.toordinal()
+    
+    # replace tokens in announcement itself
+    announcementText = announcementText.replace(r'{title}', announcementMetadata['title'])
+    announcementText = announcementText.replace(r'{date}', datetime.date.fromordinal(announcementMetadata['date']).strftime('%B %d, %Y'))
+
+    # add announcement to dictionary
+    jeffAnnouncements[announcementPaths[announcementPath]] = jeffAnnouncement(announcementMetadata['title'], announcementMetadata['date'], announcementText, announcementPaths[announcementPath])
+
+# sort announcementPaths by date
+sortedAnnouncements = sorted(list(jeffAnnouncements.values()), key=lambda jeffAnnouncement: jeffAnnouncement.date, reverse=True)
+
+# write announcement list and featured announcement
+with open('announcements/jeffAnnouncementPreview.html', 'r', encoding='utf-8') as jeffAnnouncementItem:
+    # make replacements to preview
+    jeffAnnouncementPreviewTemplate = jeffAnnouncementItem.read()
+    jeffAnnouncementPreviews = []
+    for sortedAnnouncement in sortedAnnouncements:
+        # remove 'announcements/' in path
+        sortedAnnouncement.outputPath = sortedAnnouncement.outputPath.replace('announcements/', '')
+
+        # replace tokens in announcement preview and add to list
+        jeffAnnouncementPreview = sortedAnnouncement.replaceTokens(jeffAnnouncementPreviewTemplate)
+        jeffAnnouncementPreviews.append(jeffAnnouncementPreview)
+
+        # put 'announcements/' back
+        sortedAnnouncement.outputPath = 'announcements/' + sortedAnnouncement.outputPath
+    
+    # combine previews
+    with open('announcements/announcement_list.html', 'w', encoding='utf-8') as jeffAnnouncementList:
+        jeffAnnouncementList.write(''.join(jeffAnnouncementPreviews))
+    
+    # make featured announcement preview
+    featuredAnnouncement = sortedAnnouncements[0]
+    #featuredAnnouncementTemplate = jeffAnnouncementPreviewTemplate.replace('jeffArticleListItem', 'jeffFeaturedArticle').replace('jeffArticleLink', 'jeffFeaturedArticleLink').replace('jeffTopicSmall', 'jeffTopic').replace('jeffArticleHeadingSmall', 'jeffFeaturedArticleHeading').replace('jeffDateSmall', 'jeffDateBig').replace('jeffArticleImageSmall', 'jeffFeaturedImageBig').replace('jeffSmallArticlePreview', 'jeffBigArticlePreview')
+    featuredAnnouncementPreview = featuredAnnouncement.replaceTokens(featuredArticleTemplate)
+
+    with open('announcements/featured.html', 'w', encoding='utf-8') as jeffAnnouncementFeaturedPreview:
+        jeffAnnouncementFeaturedPreview.write(featuredAnnouncementPreview)
+
 # read token files
 tokenTexts = {}
 for token in list(tokenPaths.keys()):
@@ -105,6 +180,11 @@ for pagePath in list(subpagePaths.keys()):
 for articlePath in list(articlePaths.keys()):
     subpagePaths[articlePath] = articlePaths[articlePath]
     subpageTexts[articlePath] = jeffArticles[subpagePaths[articlePath]].bodyText
+
+# add each announcement to the subpage dictionary
+for announcementPath in list(announcementPaths.keys()):
+    subpagePaths[announcementPath] = announcementPaths[announcementPath]
+    subpageTexts[announcementPath] = jeffAnnouncements[subpagePaths[announcementPath]].bodyText
 
 # make replacements
 for pagePath in list(subpageTexts.keys()):
