@@ -143,6 +143,14 @@ button {
     text-decoration: none;
 }
 
+.jeffAttribution {
+    font-size: 12px;
+    line-height: 12px;
+    margin-top: 0px;
+    padding-top: 0px;
+    padding-bottom: 8px;
+}
+
 .jeffIntroSection {
     margin-top: 180px;
 }
@@ -436,6 +444,7 @@ button {
 .jeffArticle {
     margin-top: 180px;
     line-height: 28px;
+    min-width: 400px;
     max-width: 1600px;
     text-align: center;
     margin-left: auto;
